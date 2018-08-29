@@ -4,11 +4,11 @@ def installTools(){
     virtualenv .venv -p $(which python3)
 
     cd legion
-    ../.venv/bin/python3 setup.py develop
+    ../.venv/bin/python3 -m pip install -e ./
     cd ..
 
     cd legion_test
-    ../.venv/bin/python3 setup.py develop
+    ../.venv/bin/python3 -m pip install -e ./
     '''
 }
 
@@ -88,7 +88,7 @@ def createjenkinsJobs(String commitID) {
     cd legion_test
     ../.venv/bin/pip install -r requirements/base.txt
     ../.venv/bin/pip install -r requirements/test.txt
-    ../.venv/bin/python setup.py develop
+    ../.venv/bin/python -m pip install -e ./
     '''
     withAWS(credentials: 'kops') {
     	withCredentials([file(credentialsId: "vault-${params.Profile}", variable: 'vault')]) {
@@ -159,13 +159,13 @@ def runRobotTests(tags="") {
             cd legion
             ../.venv/bin/pip install -r requirements/base.txt
             ../.venv/bin/pip install -r requirements/test.txt
-            ../.venv/bin/python setup.py develop
+            ../.venv/bin/python -m pip install -e ./
             cd ..
 
             cd legion_test
             ../.venv/bin/pip install -r requirements/base.txt
             ../.venv/bin/pip install -r requirements/test.txt
-            ../.venv/bin/python setup.py develop
+            ../.venv/bin/python -m pip install -e ./
 
             echo "Starting robot tests"
             cd ../tests/robot

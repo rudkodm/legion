@@ -87,7 +87,7 @@ node {
                 ../.venv/bin/pip install -r requirements/test.txt
                 cd -
                 cd legion_test
-                ../.venv/bin/python3.6 setup.py develop
+                ../.venv/bin/python3.6 -m pip install -e ./ 
                 '''
             }
 
@@ -124,7 +124,7 @@ node {
                     cd legion_test
                     ../.venv/bin/python3.6 setup.py sdist 
                     ../.venv/bin/python3.6 setup.py bdist_wheel
-                    ../.venv/bin/python3.6 setup.py develop
+                    ../.venv/bin/python3.6 -m pip install -e ./
                     """
 
                     print('Build legion')
@@ -132,7 +132,7 @@ node {
                     cd legion
                     ../.venv/bin/python3.6 setup.py sdist 
                     ../.venv/bin/python3.6 setup.py bdist_wheel
-                    ../.venv/bin/python3.6 setup.py develop
+                    ../.venv/bin/python3.6 -m pip install -e ./
                     """
 
                     print('Build legion_airflow')
@@ -143,7 +143,7 @@ node {
                     ../.venv/bin/pip install -r requirements/test.txt
                     ../.venv/bin/python3.6 setup.py sdist 
                     ../.venv/bin/python3.6 setup.py bdist_wheel
-                    ../.venv/bin/python3.6 setup.py develop
+                    ../.venv/bin/python3.6 -m pip install -e ./
                     """
                 }, 'Build docs': {
                     fullBuildNumber = env.BUILD_NUMBER
