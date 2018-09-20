@@ -20,8 +20,6 @@ pipeline {
                     def dateFormat = new SimpleDateFormat("yyyyMMddHHmmss")
                     def date = new Date()
                     def buildDate = dateFormat.format(date)
-                    
-                    dockerCacheArg = (params.EnableDockerCache) ? '' : '--no-cache'
 
                     Globals.dockerLabels = "--label git_revision=${Globals.rootCommit} --label build_id=${env.BUILD_NUMBER} --label build_user=${env.BUILD_USER} --label build_date=${buildDate}"
                     println(Globals.dockerLabels)
@@ -459,8 +457,7 @@ EOL
         }
 	}
     post { 
-        always {
-            notifyBuild(currentBuild.result)
+        always { 
             deleteDir()
         }
     }
