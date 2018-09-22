@@ -155,7 +155,7 @@ class TestK8SModelOperations(unittest2.TestCase):
 
     @attr('k8s', 'models')
     def test_model_watch_service_endpoints_state(self):
-        states = []
+        states = []  # history of states (each state consists model services)
 
         enclave = self._get_test_enclave()
 
@@ -172,7 +172,7 @@ class TestK8SModelOperations(unittest2.TestCase):
             self.assertFalse(is_test_model_in_last_state(), 'state has been found but model has not been deployed yet')
 
             model_service = enclave.deploy_model(TEST_IMAGE)
-            self.assertTrue(legion_test.utils.wait_until(lambda: not is_test_model_in_last_state()),
+            self.assertTrue(legion_test.utils.wait_until(lambda: is_test_model_in_last_state()),
                             'state has not been found but model has been deployed')
 
             # Delete new model
