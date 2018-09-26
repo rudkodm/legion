@@ -36,6 +36,8 @@ echo "Registering hook"
 git secrets --install -f
 
 echo "Git secrets have been configured"
+echo "Configuration: "
+git secrets --list
 
 if [ ! -z $USER ]; then
     echo "Thank you for using pre-commit hooks, $USER"
