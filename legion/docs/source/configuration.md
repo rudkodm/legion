@@ -171,7 +171,7 @@ airflow:
   slack:
     channel: airflow
     username: Airflow
-    token: ""
+    token: pass
   webserver:
     email_backend: "etl.slack.send_notification" # set email_backend to empty for Slack disabling notifications
 

@@ -1,0 +1,5 @@
+000000000000
+:(param|type) (login|password|pass|token):
+(login|password|pass|token):\s*(~|pass|readonly|admin|str,|{{|"{{|$|YWRtaW4=)
+(127.0.0.1|0.0.0.0|20.10.30.40)
+nonMasqueradeCIDR:
