@@ -170,7 +170,7 @@ airflow:
   # Airflow-slack integration
   slack:
     channel: airflow
-    username: Airflow
+    username: pass
     token: pass
   webserver:
     email_backend: "etl.slack.send_notification" # set email_backend to empty for Slack disabling notifications
@@ -212,10 +212,10 @@ dex:
         orgs:
         - name: legion-platform  # linked GitHub organizations
     staticPasswords:  # static hardcoded passwords for test
-    - email: "user@example.com"      
+    - email: pass@mail.com
       password: password
       hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W" # bcrypt hash of the string "password"
-      username: "user"
+      username: pass
       userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"
   groups:  # GitHub groups mapping
   - clusterrolebinding: cluster-admin

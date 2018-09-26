@@ -37,7 +37,7 @@ staticClients: []
 #  - 'https://jenkins.domain.com/securityRealm/finishLogin'
 #  - 'https://auth.domain2.com/callback/example'
 #  name: 'Example Cluster'
-#  secret: eXamplEsEcretphrase24len
+#  secret: pass
 
 staticPasswords: []
 # - email: "admin@example.com"
