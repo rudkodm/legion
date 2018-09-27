@@ -58,10 +58,13 @@ chmod a+rw .git/hooks/commit-msg
 chmod a+rw .git/hooks/pre-commit
 chmod a+rw .git/hooks/prepare-commit-msg
 
-echo "Adding to post-checkout hook script invoking of $ME"
+echo "Adding to post-checkout & post-merge hooks script invoking of $ME"
 echo "#!/usr/bin/env bash" > .git/hooks/post-checkout
 echo "bash $ME || true" >> .git/hooks/post-checkout
 chmod a+rwx .git/hooks/post-checkout
+echo "#!/usr/bin/env bash" > .git/hooks/post-merge
+echo "bash $ME || true" >> .git/hooks/post-merge
+chmod a+rwx .git/hooks/post-merge
 
 if [ ! -z $USER ]; then
     echo "Thank you for using pre-commit hooks, $USER"
