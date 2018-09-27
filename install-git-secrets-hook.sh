@@ -6,6 +6,8 @@ BIN_PATH="$BIN_DIRECTORY/git-secrets"
 DOWNLOAD_URL="https://raw.githubusercontent.com/awslabs/git-secrets/$VERSION/git-secrets"
 ME=$(basename "$0")
 
+# TODO: test
+
 if [ ! -f $BIN_PATH ]; then
     echo "Installing git-secrets v.$VERSION to $BIN_PATH from $DOWNLOAD_URL"
     wget $DOWNLOAD_URL -O $BIN_PATH
