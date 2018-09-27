@@ -290,9 +290,11 @@ class K8SPropertyStorage:
 
         :param source_dict: dict with readed values
         :type source_dict: dict[str, str]
-        :return: None
+        :return: bool -- is new data has been received
         """
+        data_has_been_changed = self._state != source_dict
         self._state = source_dict
+        return data_has_been_changed
 
     def _write_data_to_dict(self):
         """
@@ -333,8 +335,9 @@ class K8SPropertyStorage:
         """
         Load data from K8S
 
-        :return: None
+        :return: bool -- is new data has been received
         """
+        data_has_been_changed = False
         try:
             LOGGER.debug('Reading {} {!r} in namespace {!r}'.format(self.__class__.__name__,
                                                                     self.k8s_name,
@@ -342,12 +345,13 @@ class K8SPropertyStorage:
 
             config_map_object = self._read_k8s_resource()
 
-            self._read_data_from_dict(config_map_object.data)
+            data_has_been_changed = self._read_data_from_dict(config_map_object.data)
         except Exception as load_exception:
             self._read_k8s_resource_exception_handler(load_exception)
 
         self._last_load_time = time.time()
         self._saved = True
+        return data_has_been_changed
 
     def _check_and_reload(self):
         """
@@ -446,9 +450,14 @@ class K8SPropertyStorage:
         LOGGER.info('Creating watch for object {!r}'.format(self))
         watch = self._build_k8s_resource_watch()
         for (event_type, event_object) in watch.stream:
-            LOGGER.info('Watch got new event. Type = {}'.format(event_type))
-            self.load()
-            yield (event_type, self.data)
+            LOGGER.info('Watch got new event. Type = {!r}'.format(event_type))
+            data_has_been_changed = self.load()
+
+            if data_has_been_changed:
+                LOGGER.debug('Issuing properties change event {!r}'.format(event_type))
+                yield (event_type, self.data)
+            else:
+                LOGGER.warning('Ignoring new properties change event {!r} without real data update'.format(event_type))
 
     def _call_callback(self):
         """
@@ -655,12 +664,15 @@ class K8SSecretStorage(K8SPropertyStorage):
 
         :param source_dict: dict with readed values
         :type source_dict: dict[str, str]
-        :return: None
+        :return: bool -- is new data has been received
         """
-        self._state = {
+        new_data = {
             k: base64.b64decode(v.encode('ascii')).decode('utf-8')
             for k, v in source_dict.items()
         }
+        data_has_been_changed = self._state != new_data
+        self._state = new_data
+        return data_has_been_changed
 
     def _write_data_to_dict(self):
         """
