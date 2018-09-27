@@ -21,7 +21,7 @@ else
     echo "git-secrets script already exists: $BIN_PATH"
 fi
 
-DIR=$(dirname "$(readlink -f "$0")")
+DIR=$(dirname "$(readlink "$0")")
 echo "Working in directory $DIR"
 
 echo "Flushing git-secrets configuration"

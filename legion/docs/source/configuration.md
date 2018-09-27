@@ -212,7 +212,7 @@ dex:
         orgs:
         - name: legion-platform  # linked GitHub organizations
     staticPasswords:  # static hardcoded passwords for test
-    - email: example@mail.com
+    - email: example@example.com
       password: example
       hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W" # bcrypt hash of the string "password"
       username: example
