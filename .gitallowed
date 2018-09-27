@@ -1,5 +1,0 @@
-000000000000
-:(param|type) ([Ll]ogin|[Pp]assword|[Pp]ass|[Tt]oken|[Uu]sername|[sS]ecret|[Pp]rivate\s*):
-([Ll]ogin|[Pp]assword|[Pp]ass|[Tt]oken|[Uu]sername|[sS]ecret|[Pp]rivate\s*):(\s|"|'|\||-)*(~|pass|user|readonly|admin|str,|{{|$|YWRtaW4=)
-(127.0.0.1|0.0.0.0|20.10.30.40)
-nonMasqueradeCIDR:
