@@ -3,8 +3,8 @@ domainDelimiter: "-"
 
 secrets:
   postgres:
-    user: pass
-    password: pass
+    user: example
+    password: example
     db: pass
 
   fernet_key: fernet_key

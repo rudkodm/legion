@@ -4,13 +4,16 @@ VERSION="1.2.1"
 BIN_DIRECTORY=$(dirname $(which git))
 BIN_PATH="$BIN_DIRECTORY/git-secrets"
 DOWNLOAD_URL="https://raw.githubusercontent.com/awslabs/git-secrets/$VERSION/git-secrets"
+ME=$(basename "$0")
 
 if [ ! -f $BIN_PATH ]; then
     echo "Installing git-secrets v.$VERSION to $BIN_PATH from $DOWNLOAD_URL"
     wget $DOWNLOAD_URL -O $BIN_PATH
     RETCODE=$?
     if [ "$RETCODE" -ne "0" ]; then
-        echo "Please run this script in privileged mode"
+        echo "Please run this script in privileged mode or install git-secrets v. $VERSION manually"
+        echo "wget $DOWNLOAD_URL -O $BIN_PATH"
+        echo "chmod a+x $BIN_PATH"
         exit 1
     fi
     chmod a+x $BIN_PATH
@@ -54,6 +57,11 @@ echo "Allowing reset git hooks without privileged mode"
 chmod a+rw .git/hooks/commit-msg
 chmod a+rw .git/hooks/pre-commit
 chmod a+rw .git/hooks/prepare-commit-msg
+
+echo "Adding to post-checkout hook script invoking of $ME"
+echo "#!/usr/bin/env bash" > .git/hooks/post-checkout
+echo "bash $ME || true" >> .git/hooks/post-checkout
+chmod a+rwx .git/hooks/post-checkout
 
 if [ ! -z $USER ]; then
     echo "Thank you for using pre-commit hooks, $USER"

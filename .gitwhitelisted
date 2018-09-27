@@ -1,20 +1,24 @@
+# WARNING: PLEASE KEEP ONE EMPTY STRING AT THE END OF THIS FILE
 000000000000
 # Description:
 # allow python documentation strings for values like login/password/etc.
 # Examples:
 # :param login: this is description
 # :type password: password for account
-:(param|type) ([Ll]ogin|[Pp]assword|[Pp]ass|[Tt]oken|[Uu]sername|[sS]ecret|[Pp]rivate\s*):
+:(param|type) ([Ll]ogin|[Pp]assword|[Pp]ass|[Tt]oken|[Uu]ser|[Uu]sername|[sS]ecret|[Pp]rivate\s*):
 # Description:
 # allow particular login/passwords/etc. values like pass/~, function signature,
 # ansible substitution, end of line, encoded base64 demo password
 # Examples:
-# password:~
-# token:
-([Ll]ogin|[Pp]assword|[Pp]ass|[Tt]oken|[Uu]sername|[sS]ecret|[Pp]rivate\s*):(\s|"|'|\||-)*(~|pass|user|readonly|str,|{{|$|YWRtaW4=)
+# def func(login: str,...)
+# password: ~
+# password:
+([Ll]ogin|[Pp]assword|[Pp]ass|[Tt]oken|[Uu]ser|[Uu]sername|[sS]ecret|[Pp]rivate\s*):(\\s|"|')*(~|example|str,|{{|\|-)
+# TODO: hardcoded values should be removed in future when closing LEGION #499
+(user|password): YWRtaW4=
 # Description:
-# allow particular IPv4 addresses (localhost, broadcast and demo)
-(127.0.0.1|0.0.0.0|20.10.30.40)
+# allow localhost IPv4 address
+127.0.0.1
 # Description:
 # allow IPv4 configuration for nonMasqueradeCIDR be stored
-nonMasqueradeCIDR:
+nonMasqueradeCIDR:\\s*[0-9\\./]+
