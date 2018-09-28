@@ -8,3 +8,6 @@ ${MODEL_WITH_PROPS_PROP}            number.pow_of_ten
 ${TEST_MODEL_ID}                    demo-abc-model
 ${TEST_MODEL_1_VERSION}             1.0
 ${TEST_MODEL_2_VERSION}             1.1
+# TODO: Two next lines should be removed when closing LEGION #499, #313, #316
+${SERVICE_ACCOUNT}                  admin
+${SERVICE_PASSWORD}                 admin
