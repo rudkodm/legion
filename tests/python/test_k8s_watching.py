@@ -104,18 +104,18 @@ class TestK8SWatching(unittest2.TestCase):
 
             # Create new namespace from specification
             core_api.create_namespace(new_namespace)
-            time.sleep(1)
-
-            self.assertIn((legion.k8s.EVENT_ADDED, TEST_ENCLAVE_NAME), events)
+            self.assertTrue(
+                legion_test.utils.wait_until(lambda: (legion.k8s.EVENT_ADDED, TEST_ENCLAVE_NAME) in events,
+                                             1, 5))
 
             # Delete new namespace
             legion.k8s.Enclave(TEST_ENCLAVE_NAME).delete(5)
-            time.sleep(1)
-            self.assertIn((legion.k8s.EVENT_MODIFIED, TEST_ENCLAVE_NAME), events)
-
-            # Wait until full deletion
-            time.sleep(10)
-            self.assertIn((legion.k8s.EVENT_DELETED, TEST_ENCLAVE_NAME), events)
+            self.assertTrue(
+                legion_test.utils.wait_until(lambda: (legion.k8s.EVENT_MODIFIED, TEST_ENCLAVE_NAME) in events,
+                                             1, 5))
+            self.assertTrue(
+                legion_test.utils.wait_until(lambda: (legion.k8s.EVENT_DELETED, TEST_ENCLAVE_NAME) in events,
+                                             1, 5))
 
 
 if __name__ == '__main__':
