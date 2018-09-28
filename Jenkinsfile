@@ -46,7 +46,7 @@ node {
                 Globals.rootCommit = Globals.rootCommit.trim()
             }
             stage('Check code for security issues'){
-                sh "bash install-git-hook.sh && git secrets --scan -r"
+                sh "bash install-git-secrets-hook.sh && git secrets --scan -r"
             }
 
             def dateFormat = new SimpleDateFormat("yyyyMMddHHmmss")
