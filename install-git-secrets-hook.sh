@@ -6,9 +6,11 @@ BIN_PATH="$BIN_DIRECTORY/git-secrets"
 DOWNLOAD_URL="https://raw.githubusercontent.com/awslabs/git-secrets/$VERSION/git-secrets"
 ME=$(basename "$0")
 
-# TODO: test
+echo "Checking git-secrets existence in PATH"
+git secrets > /dev/null 2>&1
+CALL_RESULT=$?
 
-if [ ! -f $BIN_PATH ]; then
+if [ "$CALL_RESULT" -ne "0" ]; then
     echo "Installing git-secrets v.$VERSION to $BIN_PATH from $DOWNLOAD_URL"
     wget $DOWNLOAD_URL -O $BIN_PATH
     RETCODE=$?
@@ -20,7 +22,8 @@ if [ ! -f $BIN_PATH ]; then
     fi
     chmod a+x $BIN_PATH
 else
-    echo "git-secrets script already exists: $BIN_PATH"
+    REAL_PATH=$(which git-secrets)
+    echo "git-secrets script already exists: $REAL_PATH"
 fi
 
 DIR=$(dirname "$(readlink "$0")")
