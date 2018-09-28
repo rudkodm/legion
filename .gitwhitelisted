@@ -20,5 +20,8 @@
 # allow localhost IPv4 address
 127.0.0.1
 # Description:
+# allow demo netmask
+1.2.3.4/32
+# Description:
 # allow IPv4 configuration for nonMasqueradeCIDR be stored
 nonMasqueradeCIDR:\\s*[0-9\\./]+
