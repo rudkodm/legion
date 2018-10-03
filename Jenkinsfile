@@ -11,7 +11,7 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
+        stage('Checkout and set build vars') {
             steps {
                 cleanWs()
                 checkout scm
@@ -26,7 +26,34 @@ pipeline {
 
                     Globals.dockerLabels = "--label git_revision=${Globals.rootCommit} --label build_id=${env.BUILD_NUMBER} --label build_user=${env.BUILD_USER} --label build_date=${buildDate}"
                     println(Globals.dockerLabels)
+                    
+                    /// Define build version
+                    if (params.StableRelease) {
+                        if (params.ReleaseVersion){
+                            Globals.buildVersion = sh returnStdout: true, script: "python3 tools/update_version_id.py --build-version=${params.ReleaseVersion} legion/legion/version.py ${env.BUILD_NUMBER} ${env.BUILD_USER}"
+                        } else {
+                            print('Error: ReleaseVersion parameter must be specified for stable release')
+                            exit 1
+                        }
+                    } else {
+                        Globals.buildVersion = sh returnStdout: true, script: "python3 tools/update_version_id.py legion/legion/version.py ${env.BUILD_NUMBER} ${env.BUILD_USER}"
+                    }
 
+                    Globals.buildVersion = Globals.buildVersion.replaceAll("\n", "")
+
+                    currentBuild.description = "${Globals.buildVersion} ${params.GitBranch}"
+                    print("Build version " + Globals.buildVersion)
+                    print('Building shared artifact')
+                    envFile = 'file.env'
+                    sh """
+                    rm -f $envFile
+                    touch $envFile
+                    echo "LEGION_VERSION=${Globals.buildVersion}" >> $envFile
+                    """
+                    archiveArtifacts envFile
+                    sh "rm -f $envFile"
+
+                    /// Set Git Tag in case of stable release
                     if (params.StableRelease) {
                         stage('Set GIT release Tag'){
                             if (params.PushGitTag){
@@ -55,7 +82,7 @@ pipeline {
         }
         stage('Build Agent Docker Image') {
             steps {
-                sh "docker build ${Globals.dockerCacheArg} -t legion-docker-agent:${env.BUILD_NUMBER} -f pipeline.Dockerfile ."
+                sh "docker build ${Globals.dockerCacheArg} -t legion-docker-agent:${Globals.buildVersion} -f pipeline.Dockerfile ."
             }
         }
         stage('Build dependencies') {
@@ -68,7 +95,7 @@ pipeline {
                         }
                     }
                     steps {
-                        /// Jenkins plugin to be used in Jenkins Docker container only
+                        /// Jenkins plugin which will be used in Jenkins Docker container only
                         sh """
                         export JAVA_HOME=\$(readlink -f /usr/bin/java | sed "s:bin/java::")
                         mvn -f k8s/jenkins/legion-jenkins-plugin/pom.xml clean -Dmaven.repo.local=/tmp/.m2/repository
@@ -102,7 +129,7 @@ pipeline {
                 stage('Run Python code analyzers') {
                     agent { 
                         docker {
-                            image "legion-docker-agent:${env.BUILD_NUMBER}"
+                            image "legion-docker-agent:${Globals.buildVersion}"
                         }
                     }
                     steps {
@@ -168,37 +195,12 @@ pipeline {
                 stage("Build and Upload Legion") {
                     agent {
                         docker {
-                            image "legion-docker-agent:${env.BUILD_NUMBER}"
+                            image "legion-docker-agent:${Globals.buildVersion}"
                             args "-e HOME=/tmp"
                         }
                     }
                     steps {
                         script {
-                            if (params.StableRelease) {
-                                if (params.ReleaseVersion){
-                                    Globals.buildVersion = sh returnStdout: true, script: "update_version_id --build-version=${params.ReleaseVersion} legion/legion/version.py ${env.BUILD_NUMBER} ${env.BUILD_USER}"
-                                } else {
-                                    print('Error: ReleaseVersion parameter must be specified for stable release')
-                                    exit 1
-                                }
-                            } else {
-                                Globals.buildVersion = sh returnStdout: true, script: "update_version_id legion/legion/version.py ${env.BUILD_NUMBER} ${env.BUILD_USER}"
-                            }
-                            Globals.buildVersion = Globals.buildVersion.replaceAll("\n", "")
-
-                            currentBuild.description = "${Globals.buildVersion} ${params.GitBranch}"
-                            print("Build version " + Globals.buildVersion)
-                            print('Building shared artifact')
-                            envFile = 'file.env'
-                            sh """
-                            rm -f $envFile
-                            touch $envFile
-                            echo "LEGION_VERSION=${Globals.buildVersion}" >> $envFile
-                            """
-                            archiveArtifacts envFile
-                            sh "rm -f $envFile"
-
-
                             withCredentials([[
                              $class: 'UsernamePasswordMultiBinding',
                              credentialsId: 'nexus-local-repository',
@@ -244,7 +246,7 @@ EOL
         stage('Build docs') {
             agent { 
                 docker {
-                    image "legion-docker-agent:${env.BUILD_NUMBER}"
+                    image "legion-docker-agent:${Globals.buildVersion}"
                     args "-v ${LocalDocumentationStorage}:${LocalDocumentationStorage}"
                 }
             }
@@ -343,9 +345,9 @@ EOL
                     }
                 }
                 stage("Run Python tests") {
-                    agent { 
+                    agent {
                         docker {
-                            image "legion-docker-agent:${env.BUILD_NUMBER}"
+                            image "legion-docker-agent:${Globals.buildVersion}"
                             args "-v ${LocalDocumentationStorage}:${LocalDocumentationStorage} -v /var/run/docker.sock:/var/run/docker.sock -u root --net host"
                         }
                     }
