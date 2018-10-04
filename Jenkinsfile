@@ -7,8 +7,6 @@ class Globals {
     static String dockerCacheArg = null
 }
 
-env.BuildVersion = ''
-
 pipeline {
     agent any
 
@@ -44,9 +42,6 @@ pipeline {
                     Globals.buildVersion = Globals.buildVersion.replaceAll("\n", "")
 
                     env.BuildVersion = Globals.buildVersion
-
-                    print 'THISISVERSION'
-                    print ${env.BuildVersion}
 
                     currentBuild.description = "${Globals.buildVersion} ${params.GitBranch}"
                     print("Build version " + Globals.buildVersion)
@@ -89,7 +84,7 @@ pipeline {
         }
         stage('Build Agent Docker Image') {
             steps {
-                sh "docker build ${Globals.dockerCacheArg} -t legion-docker-agent:${env.BuildVersion} -f pipeline.Dockerfile ."
+                sh "docker build ${Globals.dockerCacheArg} -t legion-docker-agent:${env.BUILD_NUMBER} -f pipeline.Dockerfile ."
             }
         }
         stage('Build dependencies') {
@@ -136,7 +131,7 @@ pipeline {
                 stage('Run Python code analyzers') {
                     agent { 
                         docker {
-                            image "legion-docker-agent:${env.BuildVersion}"
+                            image "legion-docker-agent:${env.BUILD_NUMBER}"
                         }
                     }
                     steps {
