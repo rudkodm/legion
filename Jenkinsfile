@@ -39,10 +39,7 @@ pipeline {
                             exit 1
                         }
                     } else {
-                        Globals.buildVersion = sh returnStdout: true, script: "python3.6 tools/update_version_id legion/legion/version.py ${env.BUILD_NUMBER} ${env.BUILD_USER}"
-                        sh """
-                        cat legion/legion/version.py
-                        """
+                        Globals.buildVersion = sh returnStdout: true, script: "python tools/update_version_id legion/legion/version.py ${env.BUILD_NUMBER} ${env.BUILD_USER}"
                     }
 
                     Globals.buildVersion = Globals.buildVersion.replaceAll("\n", "")
@@ -200,7 +197,7 @@ pipeline {
                         warnings canComputeNew: false, canResolveRelativePaths: false, categoriesPattern: '', defaultEncoding: '',  excludePattern: '', healthy: '', includePattern: '', messagesPattern: '', parserConfigurations: [[   parserName: 'PyLint', pattern: 'legion_airflow/pylint.log']], unHealthy: ''
                     }
                 }
-                stage("Build and Upload Legion") {
+                stage("Upload Legion package") {
                     agent {
                         docker {
                             image "legion-docker-agent:${env.BUILD_NUMBER}"
@@ -227,28 +224,9 @@ EOL
 """
                             }
                             sh """
-                            echo 'show version'
-                            cat legion/legion/version.py
-                            cp legion/legion/version.py legion_test/legion_test/version.py
-                            cp legion/legion/version.py legion_airflow/legion_airflow/version.py
-
-                            cd ${WORKSPACE}/legion
-                            python setup.py sdist
-                            python setup.py bdist_wheel
-
-                            cd ${WORKSPACE}/legion_test
-                            python setup.py sdist
-                            python setup.py bdist_wheel
-
-                            cd ${WORKSPACE}/legion_airflow
-                            python setup.py sdist
-                            python setup.py bdist_wheel
-
-                            ls -R
-
-                            twine upload -r ${params.LocalPyPiDistributionTargetName} '${WORKSPACE}/legion/dist/legion-${Globals.buildVersion}.*'
-                            twine upload -r ${params.LocalPyPiDistributionTargetName} '${WORKSPACE}/legion_test/dist/legion_test-${Globals.buildVersion}.*'
-                            twine upload -r ${params.LocalPyPiDistributionTargetName} '${WORKSPACE}/legion_airflow/dist/legion_airflow-${Globals.buildVersion}.*'
+                            twine upload -r ${params.LocalPyPiDistributionTargetName} '/src/legion/dist/legion-${Globals.buildVersion}.*'
+                            twine upload -r ${params.LocalPyPiDistributionTargetName} '/src/legion_test/dist/legion_test-${Globals.buildVersion}.*'
+                            twine upload -r ${params.LocalPyPiDistributionTargetName} '/src/legion_airflow/dist/legion_airflow-${Globals.buildVersion}.*'
                             """
                         }
                     }
@@ -258,7 +236,7 @@ EOL
         stage('Build docs') {
             agent { 
                 docker {
-                    image "legion-docker-agent:${Globals.buildVersion}"
+                    image "legion-docker-agent:${env.BUILD_NUMBER}"
                     args "-v ${LocalDocumentationStorage}:${LocalDocumentationStorage}"
                 }
             }
@@ -359,7 +337,7 @@ EOL
                 stage("Run Python tests") {
                     agent {
                         docker {
-                            image "legion-docker-agent:${Globals.buildVersion}"
+                            image "legion-docker-agent:${env.BUILD_NUMBER}"
                             args "-v ${LocalDocumentationStorage}:${LocalDocumentationStorage} -v /var/run/docker.sock:/var/run/docker.sock -u root --net host"
                         }
                     }
