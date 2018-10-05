@@ -30,13 +30,19 @@ pipeline {
                     /// Define build version
                     if (params.StableRelease) {
                         if (params.ReleaseVersion){
-                            Globals.buildVersion = sh returnStdout: true, script: "python tools/update_version_id --build-version=${params.ReleaseVersion} legion/legion/version.py ${env.BUILD_NUMBER} ${env.BUILD_USER}"
+                            Globals.buildVersion = sh returnStdout: true, script: "python3.6 tools/update_version_id --build-version=${params.ReleaseVersion} legion/legion/version.py ${env.BUILD_NUMBER} ${env.BUILD_USER}"
+                            sh """
+                            python3.6 tools/update_version_id --build-version=${params.ReleaseVersion} legion/legion/version.py ${env.BUILD_NUMBER} ${env.BUILD_USER}
+                            """
                         } else {
                             print('Error: ReleaseVersion parameter must be specified for stable release')
                             exit 1
                         }
                     } else {
-                        Globals.buildVersion = sh returnStdout: true, script: "python tools/update_version_id legion/legion/version.py ${env.BUILD_NUMBER} ${env.BUILD_USER}"
+                        Globals.buildVersion = sh returnStdout: true, script: "python3.6 tools/update_version_id legion/legion/version.py ${env.BUILD_NUMBER} ${env.BUILD_USER}"
+                        sh """
+                        cat legion/legion/version.py
+                        """
                     }
 
                     Globals.buildVersion = Globals.buildVersion.replaceAll("\n", "")
@@ -221,6 +227,8 @@ EOL
 """
                             }
                             sh """
+                            echo 'show version'
+                            cat legion/legion/version.py
                             cp legion/legion/version.py legion_test/legion_test/version.py
                             cp legion/legion/version.py legion_airflow/legion_airflow/version.py
 
@@ -235,6 +243,8 @@ EOL
                             cd ${WORKSPACE}/legion_airflow
                             python setup.py sdist
                             python setup.py bdist_wheel
+
+                            ls -R
 
                             twine upload -r ${params.LocalPyPiDistributionTargetName} '${WORKSPACE}/legion/dist/legion-${Globals.buildVersion}.*'
                             twine upload -r ${params.LocalPyPiDistributionTargetName} '${WORKSPACE}/legion_test/dist/legion_test-${Globals.buildVersion}.*'
