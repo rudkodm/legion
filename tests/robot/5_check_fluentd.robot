@@ -11,12 +11,12 @@ Library             legion_test.robot.Utils
 *** Test Cases ***
 Check feedback gathering
     [Documentation]  Checking that feedback gathering works
-    [Tags]  feedback  fluentd
+    [Tags]  feedback  fluentd  infra
     Send feedback data      ${HOST_PROTOCOL}://feedback-${MODEL_TEST_ENCLAVE}.${HOST_BASE_DOMAIN}   ${FEEDBACK_TAG}  a=0
 
 Check feedback processing
     [Documentation]  Checking that feedback process works normally
-    [Tags]  feedback  fluentd  aws
+    [Tags]  feedback  fluentd  aws  apps
     Choose bucket           ${FEEDBACK__BUCKET}
 
     ${a_value} =            Generate Random String   4                  [NUMBERS]
