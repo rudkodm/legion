@@ -31,9 +31,6 @@ pipeline {
                     if (params.StableRelease) {
                         if (params.ReleaseVersion){
                             Globals.buildVersion = sh returnStdout: true, script: "python3.6 tools/update_version_id --build-version=${params.ReleaseVersion} legion/legion/version.py ${env.BUILD_NUMBER} ${env.BUILD_USER}"
-                            sh """
-                            python3.6 tools/update_version_id --build-version=${params.ReleaseVersion} legion/legion/version.py ${env.BUILD_NUMBER} ${env.BUILD_USER}
-                            """
                         } else {
                             print('Error: ReleaseVersion parameter must be specified for stable release')
                             exit 1
@@ -454,6 +451,7 @@ EOL
     post { 
         always { 
             notifyBuild(currentBuild.result)
+            print("THISISPOST")
             deleteDir()
         }
     }
