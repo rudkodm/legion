@@ -25,7 +25,7 @@ pipeline {
                     Globals.dockerCacheArg = (params.EnableDockerCache) ? '' : '--no-cache'
 
                     Globals.dockerLabels = "--label git_revision=${Globals.rootCommit} --label build_id=${env.BUILD_NUMBER} --label build_user=${env.BUILD_USER} --label build_date=${buildDate}"
-                    println(Globals.dockerLabelsNOTEXISTING)
+                    println(Globals.dockerLabels)
                     
                     /// Define build version
                     if (params.StableRelease) {
