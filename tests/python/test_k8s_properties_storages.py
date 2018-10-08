@@ -86,7 +86,7 @@ class TestK8SPropertiesStorage(unittest2.TestCase):
             LOGGER.info('Cannot delete namespace {} that has been built for testing: {}'
                         .format(TEST_ENCLAVE_NAME, exception))
 
-    @attr('k8s', 'props', 'props_config_map')
+    @attr('k8s', 'props', 'props_config_map', 'infra')
     def test_overwrite_config_map_storage(self):
         """
         Overwrite config map storage on save
@@ -95,7 +95,7 @@ class TestK8SPropertiesStorage(unittest2.TestCase):
         """
         pass
 
-    @attr('k8s', 'props', 'watch')
+    @attr('k8s', 'props', 'watch', 'infra')
     def test_config_map_storage_watch(self):
         """
         Test config map storage watching
@@ -131,7 +131,7 @@ class TestK8SPropertiesStorage(unittest2.TestCase):
             self.assertTrue(legion_test.utils.wait_until(lambda: len(events) > 1, 1, 5))
             self.assertTupleEqual(events[1], (legion.k8s.EVENT_MODIFIED, {key: second_value}))
 
-    @attr('k8s', 'props', 'watch')
+    @attr('k8s', 'props', 'watch', 'infra')
     def test_secret_storage_watch(self):
         """
         Test config map storage watching
@@ -167,7 +167,7 @@ class TestK8SPropertiesStorage(unittest2.TestCase):
             self.assertTrue(legion_test.utils.wait_until(lambda: len(events) > 1, 1, 5))
             self.assertTupleEqual(events[1], (legion.k8s.EVENT_MODIFIED, {key: second_value}))
 
-    @attr('k8s', 'props', 'props_config_map')
+    @attr('k8s', 'props', 'props_config_map', 'infra')
     def test_read_config_map_with_update_on_timeout(self):
         """
         Update config map on timeouts
@@ -176,7 +176,7 @@ class TestK8SPropertiesStorage(unittest2.TestCase):
         """
         pass
 
-    @attr('k8s', 'props', 'props_config_map')
+    @attr('k8s', 'props', 'props_config_map', 'infra')
     def test_write_and_listing_config_map(self):
         """
         Listing config map
@@ -192,7 +192,7 @@ class TestK8SPropertiesStorage(unittest2.TestCase):
 
         storage_to_write.destroy()
 
-    @attr('k8s', 'props', 'props_config_map')
+    @attr('k8s', 'props', 'props_config_map', 'infra')
     def test_retrive_config_map(self):
         """
         Retrive and load config map in one instruction
@@ -210,7 +210,7 @@ class TestK8SPropertiesStorage(unittest2.TestCase):
 
         storage_to_read.destroy()
 
-    @attr('k8s', 'props', 'props_config_map')
+    @attr('k8s', 'props', 'props_config_map', 'infra')
     def test_create_and_read_config_map_storage(self):
         """
         Create and read config map storage with defined fields
@@ -237,7 +237,7 @@ class TestK8SPropertiesStorage(unittest2.TestCase):
         self.assertEqual(storage_to_read.get('str_var', cast=legion.model.string), 'Test string')
         self.assertEqual(storage_to_read['str_var'], 'Test string')
 
-    @attr('k8s', 'props', 'props_secret')
+    @attr('k8s', 'props', 'props_secret', 'infra')
     def test_create_and_read_secret_storage(self):
         """
         Create and read secret storage with defined fields
@@ -269,7 +269,7 @@ class TestK8SPropertiesStorage(unittest2.TestCase):
         items = legion.k8s.K8SConfigMapStorage.list(TEST_ENCLAVE_NAME)
         self.assertNotIn(storage_name, items)
 
-    @attr('k8s', 'props', 'props_config_map', 'props_ttl')
+    @attr('k8s', 'props', 'props_config_map', 'props_ttl', 'infra')
     def test_config_map_with_ttl(self):
         """
         Check config map TTL algorithm - positive test
@@ -301,7 +301,7 @@ class TestK8SPropertiesStorage(unittest2.TestCase):
 
         storage_to_read.destroy()
 
-    @attr('k8s', 'props', 'props_config_map', 'props_ttl')
+    @attr('k8s', 'props', 'props_config_map', 'props_ttl', 'infra')
     def test_config_map_without_ttl(self):
         """
         Check config map TTL algorithm - negative test
