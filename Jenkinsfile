@@ -331,6 +331,14 @@ EOL
                         """
                     }
                 }
+                stage("Build Fluentd Docker image") {
+                    steps {
+                        sh """
+                        cd k8s/fluentd
+                        docker build ${Globals.dockerCacheArg} --build-arg version="${Globals.buildVersion}" --build-arg pip_extra_index_params="--extra-index-url ${params.PyPiRepository}" --build-arg pip_legion_version_string="==${Globals.buildVersion}" -t legion/k8s-fluentd:${Globals.buildVersion} ${Globals.dockerLabels} .
+                        """
+                    }
+                }
                 stage("Run Python tests") {
                     agent {
                         docker {
@@ -400,6 +408,11 @@ EOL
                 stage('Upload Airflow Docker image') {
                     steps {
                         UploadDockerImage('k8s-airflow')
+                    }
+                }
+                stage('Upload Fluentd Docker image') {
+                    steps {
+                        UploadDockerImage('k8s-fluentd')
                     }
                 }
             }
