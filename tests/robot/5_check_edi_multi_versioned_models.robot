@@ -18,7 +18,7 @@ Test Teardown       Run Keywords
 Check EDI availability in all enclaves
     [Setup]         NONE
     [Documentation]  Try to connect to EDI in each enclave
-    [Tags]  edi  cli  enclave  multi_versions
+    [Tags]  edi  cli  enclave  multi_versions  infra
     :FOR    ${enclave}    IN    @{ENCLAVES}
     \  ${edi_state} =           Run EDI inspect  ${enclave}
     \  Log                      ${edi_state}

@@ -32,7 +32,7 @@ Check EDI deploy procedure
 Check EDI deploy with scale to 0
     [Setup]         Run EDI undeploy model without version and check    ${MODEL_TEST_ENCLAVE}   ${TEST_MODEL_ID}
     [Documentation]  Try to deploy dummy model through EDI console
-    [Tags]  edi  cli  enclave   one_version
+    [Tags]  edi  cli  enclave   one_version  apps
     ${resp}=        Run EDI deploy with scale      ${MODEL_TEST_ENCLAVE}   ${TEST_MODEL_IMAGE_1}   0
                     Should Be Equal As Integers    ${resp.rc}         2
                     Should contain                 ${resp.stderr}     Invalid scale parameter: should be greater then 0
